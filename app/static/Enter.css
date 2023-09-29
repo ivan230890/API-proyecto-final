@@ -1,0 +1,29 @@
+body {
+    background-image: url('vista1.jpg'); /* Reemplaza 'ruta/a/tu/imagen.jpg' con la ruta de tu imagen de fondo */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    margin: 0;
+    padding: 0;
+    height: 100vh; /* Ajusta el alto de la imagen de fondo al 100% del viewport */
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+#loginEnter {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+button {
+    background-color: #b3ff00;
+    color: rgb(14, 4, 4);
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(100, 243, 5, 0.678);
+    border: 2px solid #00c721;
+}

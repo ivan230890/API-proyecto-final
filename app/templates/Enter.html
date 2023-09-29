@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for ('static', filename ='Enter.css') }}">
+    <title>Inicio de sesion</title>
+</head>
+<body>
+    
+    <!-- Formulario de inicio de sesión -->
+    <div id="loginEnter">
+        <button onclick="redirectToLogin()">Enter</button>
+    </div>
+    <script>
+        function redirectToLogin() {
+            window.location.href = "/";
+        }
+    </script>
+</body>
+</html>

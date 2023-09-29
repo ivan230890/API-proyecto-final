@@ -1,0 +1,134 @@
+body {
+    background-image: url(fondo.jpg);
+    background-size: cover;
+    justify-content: center;
+    align-items: center;
+    height: 500vh;
+    margin: 0;
+}
+
+#loginP {
+    display: none; /* Ocultar el contenido del área de trabajo por defecto */
+}
+
+body, html {
+margin: 0;
+padding: 0;
+height: 100%;
+}
+
+.loginP {
+display: flex;
+height: 100%;
+border: 2px solid black; /* Borde alrededor de ambos bloques */
+}
+
+#bloqueiz {
+flex: 30%; /* determina cuánto espacio debe ocupar */
+display: flex;  /* Los elementos dentro de él se pueden organizar en filas o columnas */
+flex-direction: column; /*  Los elementos se apilarán verticalmente */
+justify-content: space-between; /*distribuirá el espacio vertical de manera uniforme entre los elementos, empujando el primer elemento hacia la parte superior del contenedor y el último hacia la parte inferior */
+align-items: left;    /* centra los elementos horizontalmente en el contenedor */
+/*border-right: 2px solid rgb(72, 255, 0); /* Borde derecho, para separar visualmente de otros elementos */  /* */
+}
+
+#bloquemed {
+    flex: 30%; /* Ancho flexible del 30% */
+    /*border-right: 2px solid rgb(72, 255, 0); /* Borde derecho */
+}
+
+
+#bloqueder {
+flex: 40%;
+/*  border-left: 2px solid black;  Borde izquierdo */
+display: flex;
+flex-wrap: wrap; /* Permite que los iconos se envuelvan en múltiples filas */
+justify-content: flex-start; /* Alinea los iconos a la izquierda */
+align-content: flex-start; /* Alinea los iconos a la parte superior */
+}
+
+.icono {
+    padding: 10px;
+    cursor: pointer; /* línea para cambiar el puntero a mano */
+    width: calc(50% - 20px); /* Ancho del icono (25% para 4 iconos por fila) */
+    box-sizing: border-box; /* Incluye el padding en el ancho */
+}
+
+.icono img {
+width: 50px; /* Tamaño del icono */
+height: 50px;
+}    
+
+.mensaje {
+background-color: rgba(255, 255, 255, 0.397);
+border-radius: 20px;
+box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+padding: 20px;
+text-align: center;
+border: 2px solid rgb(72, 255, 0);
+}
+
+#crearServidor {
+    display: none;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(255, 255, 255, 0.397);
+    border-radius: 20px;
+    padding: 20px;
+    border: 2px solid #48ff00;
+}
+
+.nombre-servidor {
+    color: rgb(240, 230, 230); /* Cambia el color del texto a rojo */
+    font-weight: bold; /* Hace que el texto sea negrita */
+}
+
+.nombre-icono {
+    color: rgb(244, 244, 247); /* Cambia el color del texto a azul */
+    font-family: Arial, sans-serif; /* Cambia la fuente del texto */
+}
+
+/* Estilos para el fondo semi-transparente 
+#fondo-semi-transparente {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}*/
+
+/* Estilos para el formulario de creación de canal */
+#mostrarCrearCanal {
+    background-color: rgba(255, 255, 255, 0.397);
+    border-radius: 20px;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.nombreCanal {
+    cursor: pointer; /* Hace que los canales sean seleccionables con el puntero */
+    margin-bottom: 5px;
+}
+
+.logout-button {
+    position: fixed;
+    top: 20px; /* Ajusta la distancia superior según tus preferencias */
+    right: 20px; /* Ajusta la distancia derecha según tus preferencias */
+    z-index: 999; /* Asegura que esté en la parte superior */
+}
+
+button {
+    background-color: #b3ff00;
+    color: rgb(14, 4, 4);
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}

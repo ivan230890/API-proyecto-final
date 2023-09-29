@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Perfil de Usuario</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for ('static', filename ='miperfil.css') }}">
+</head>
+<body>
+    <div class="button-container">
+        <!-- Agregar un botón para redirigir a loginP.html en la parte superior -->
+        <button onclick="window.location.href='loginP.html'" class="redirigir-btn">X</button>
+
+        <!-- Agregar un botón para guardar cambios -->
+        <button onclick="guardarCambios()" class="guardar-btn">Guardar Cambios</button>
+    </div>
+
+    <div class="perfil">
+        <h2>Mi perfil</h2>
+        <div class="usuario-info">
+            <form method="POST" enctype="multipart/form-data" id="profileImageForm">
+                <img id="userImage" src="{{ profile_image_path }}" alt="Imagen de perfil" onclick="selectImage()">
+                <input type="file" id="imageInput" style="display: none;" onchange="previewImage(this)">
+                <p class="nombre-apellido">{{ user.nombre }} {{ user.apellido }}</p>
+            </form>
+            <div class="datos-usuario">
+                <p>usuario: <span id="userName">{{ user.nombre_usuario }}</span><button class="editar-btn" onclick="editarCampo('userName')">Editar</button></p>
+                <p>Nombre: <span id="userFirstName">{{ user.nombre }}</span><button class="editar-btn" onclick="editarCampo('userFirstName')">Editar</button></p>
+                <p>Apellido: <span id="userLastName">{{ user.apellido }}</span><button class="editar-btn" onclick="editarCampo('userLastName')">Editar</button></p>
+                <p>Correo electrónico: <span id="userEmail">{{ user.correo_electronico }}</span><button class="editar-btn" onclick="editarCampo('userEmail')">Editar</button></p>
+            </div>
+        </div>
+        <div class="acciones">
+            <p class="Contraseña">Contraseña</p>
+            <button onclick="abrirVentanaEmergente()">cambiar contraseña</button>
+        </div>
+    </div>
+    
+    <!-- Ventana emergente para cambiar la contraseña (inicialmente oculta) -->
+    <div class="ventana-emergente" id="ventanaCambiarContraseña" style="display: none;">
+        <h2>Cambiar contraseña</h2>
+        <label for="contraseñaActual">Contraseña actual:</label>
+        <input type="password" id="contraseñaActual">
+        <label for="nuevaContraseña">Nueva contraseña:</label>
+        <input type="password" id="nuevaContraseña">
+        <label for="confirmarContraseña">Confirmar contraseña:</label>
+        <input type="password" id="confirmarContraseña">
+        <button onclick="confirmarCambioContraseña()">Confirmar</button>
+        <button onclick="cerrarVentanaEmergente()">Cancelar</button>
+    </div>
+
+    <script>
+        // Función para activar la edición de un campo
+        function editarCampo(fieldId) {
+            const field = document.getElementById(fieldId);
+            const value = field.textContent;
+            
+            // Verificar si ya estamos en modo edición
+            if (!field.querySelector("input")) {
+                const input = document.createElement("input");
+                input.setAttribute("type", "text");
+                input.setAttribute("value", value);
+                field.textContent = "";
+                field.appendChild(input);
+            } else {
+                const input = field.querySelector("input");
+                const newValue = input.value;
+                field.textContent = newValue;
+            }
+        }
+
+        // Función para abrir el selector de archivos al hacer clic en la imagen
+        function selectImage() {
+            const imageInput = document.getElementById("imageInput");
+            imageInput.click();
+        }
+
+        function previewImage(input) {
+            const userImage = document.getElementById("userImage");
+            const imagenPerfil = document.getElementById("imagenPerfil");
+            const file = input.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    userImage.src = e.target.result;
+                    // Almacenar la imagen como base64 en el campo oculto
+                    imagenPerfil.value = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Función para mostrar la imagen seleccionada por el usuario
+        function displaySelectedImage(event) {
+            const image = document.getElementById("userImage");
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    image.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Agregar un evento al input para cambiar cuando se selecciona una imagen
+
+        // Función para abrir la ventana emergente
+        function abrirVentanaEmergente() {
+            const ventanaEmergente = document.getElementById("ventanaCambiarContraseña");
+            const fondoEmergente = document.createElement("div");
+            fondoEmergente.className = "ventana-emergente-fondo";
+
+            // Agregar la ventana emergente y el fondo a la página
+            document.body.appendChild(fondoEmergente);
+            document.body.appendChild(ventanaEmergente);
+            
+            // Mostrar la ventana emergente
+            ventanaEmergente.style.display = "block";
+        }
+
+        // Función para cerrar la ventana emergente
+        function cerrarVentanaEmergente() {
+            const ventanaEmergente = document.getElementById("ventanaCambiarContraseña");
+            const fondoEmergente = document.querySelector(".ventana-emergente-fondo");
+
+            // Ocultar la ventana emergente
+            ventanaEmergente.style.display = "none";
+
+            // Remover la ventana emergente y el fondo de la página
+            document.body.removeChild(fondoEmergente);
+            document.body.removeChild(ventanaEmergente);
+        }
+
+        function confirmarCambioContraseña() {
+            const contraseñaActual = document.getElementById("contraseñaActual").value;
+            const nuevaContraseña = document.getElementById("nuevaContraseña").value;
+            const confirmarContraseña = document.getElementById("confirmarContraseña").value;
+
+            // Verificar que los campos no estén vacíos
+            if (contraseñaActual === "" || nuevaContraseña === "" || confirmarContraseña === "") {
+                alert("Por favor, complete todos los campos.");
+            } else if (nuevaContraseña !== confirmarContraseña) {
+                alert("La nueva contraseña y la confirmación no coinciden.");
+            } else {
+                // Enviar la solicitud POST para cambiar la contraseña
+                fetch("/cambiar_contraseña", {
+                    method: "POST",
+                    body: new URLSearchParams({
+                        "contraseñaActual": contraseñaActual,
+                        "nuevaContraseña": nuevaContraseña,
+                        "confirmarContraseña": confirmarContraseña,
+                    }),
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded",
+                    },
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Contraseña cambiada con éxito
+                            alert(data.message);
+                            // Cerrar la ventana emergente
+                            cerrarVentanaEmergente();
+                        } else {
+                            // Error al cambiar la contraseña
+                            alert(data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Error al realizar la solicitud:", error);
+                        alert("Error al cambiar la contraseña. Por favor, inténtalo nuevamente.");
+                    });
+            }
+        }
+
+
+        // Función para guardar los cambios realizados
+        function guardarCambios() {
+            // Obtener los valores editados
+            const nuevoUsuario = document.getElementById("userName").textContent;
+            const nuevoNombre = document.getElementById("userFirstName").textContent;
+            const nuevoApellido = document.getElementById("userLastName").textContent;
+            const nuevoEmail = document.getElementById("userEmail").textContent;
+            const nuevaImagen = document.getElementById("userImage").src;
+
+            // Crear un objeto FormData para enviar la imagen al servidor
+            const formData = new FormData();
+            formData.append("userName", nuevoUsuario);
+            formData.append("userFirstName", nuevoNombre);
+            formData.append("userLastName", nuevoApellido);
+            formData.append("userEmail", nuevoEmail);
+            formData.append("userImage", nuevaImagen);
+
+            // Agregar la imagen al FormData si se ha cambiado
+            const imageInput = document.getElementById("imageInput");
+            if (imageInput.files.length > 0) {
+                const newImage = imageInput.files[0];
+                formData.append("profileImage", newImage);
+            }
+
+            // Realizar una solicitud POST al servidor para guardar los cambios
+            fetch("/guardar_cambios", {
+                method: "POST",
+                body: formData,
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Los cambios se guardaron correctamente
+                    alert("Cambios guardados correctamente.");
+                } else {
+                    // Hubo un error al guardar los cambios, muestra un mensaje de error si es necesario
+                    alert("Error al guardar los cambios.");
+                }
+            })
+            .catch(error => {
+                console.error("Error al realizar la solicitud:", error);
+                alert("Error al guardar los cambios. Por favor, inténtalo nuevamente.");
+            });
+        }
+
+    </script>
+</body>
+</html>
+

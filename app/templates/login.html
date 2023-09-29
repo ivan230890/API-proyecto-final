@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for ('static', filename ='login.css') }}">
+    <title>Inicio de sesion</title>
+</head>
+<body>
+    
+    <!-- Formulario de inicio de sesión -->
+    <div id="loginForm">
+        <h2 style="color: white; font-family: Arial, sans-serif; font-size: 24px;">Iniciar Sesión</h2>
+        <form method="POST" action="/login">
+            <input type="email" placeholder="Correo electrónico" name="registerEmail" id="loginEmail">
+            <input type="password" placeholder="Contraseña" name="registerPassword" id="loginPassword">
+            <button type="submit">Iniciar Sesión</button>
+        </form>
+        <h2 style="color: white; font-family: Arial, sans-serif; font-size: 24px;">¿No tienes una cuenta?</h2>
+        <button onclick="showRegisterForm()">Registrarse</button>
+    </div>
+
+
+    <!-- Formulario de registro -->
+    <div id="registerForm" style="display:none;">
+        <h2>Registrarse</h2>
+        <form method="POST" action="/register">
+            <input type="email" placeholder="Correo electrónico" id="registerEmail">
+            <input type="text" placeholder="Nombre de usuario" id="registerUsername">
+            <input type="text" placeholder="Nombre" id="registerFirstName">
+            <input type="text" placeholder="Apellido" id="registerLastName">
+            <input type="password" placeholder="Contraseña" id="registerPassword">
+            <label>Fecha de nacimiento:</label>
+            <select id="daySelect">
+                <!-- Opciones para el día (1-31) -->
+            </select>
+            <select id="monthSelect">
+                <!-- Opciones para el mes (1-12) -->
+            </select>
+            <select id="yearSelect">
+                <!-- Opciones para el año (por ejemplo, desde 1900 hasta el año actual) -->
+            </select>
+
+            <button onclick="register()">Confirmar</button>
+            <button onclick="redirectToHomePage()">Cancelar</button>
+        </form>
+    </div>
+
+    <script>
+        function populateDaySelect() {
+            var daySelect = document.getElementById('daySelect');
+            for (var i = 1; i <= 31; i++) {
+                var option = document.createElement('option');
+                option.text = i;
+                daySelect.add(option);
+            }
+        }
+
+        function populateMonthSelect() {
+            var monthSelect = document.getElementById('monthSelect');
+            var months = [
+                'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+                'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+            ];
+            for (var i = 0; i < months.length; i++) {
+                var option = document.createElement('option');
+                option.text = months[i];
+                monthSelect.add(option);
+            }
+        }
+
+        function populateYearSelect() {
+            var yearSelect = document.getElementById('yearSelect');
+            var currentYear = new Date().getFullYear();
+            for (var year = 1900; year <= currentYear; year++) {
+                var option = document.createElement('option');
+                option.text = year;
+                yearSelect.add(option);
+            }
+        }
+
+        // Llenar los menús desplegables al cargar la página
+        populateDaySelect();
+        populateMonthSelect();
+        populateYearSelect();
+
+        var daySelect = document.getElementById('daySelect').value;
+        var monthSelect = document.getElementById('monthSelect').value;
+        var yearSelect = document.getElementById('yearSelect').value;
+
+        // Crear un objeto Date con los valores seleccionados
+        var selectedDate = new Date(yearSelect, months.indexOf(monthSelect), daySelect);
+
+        // Obtener la fecha formateada en el formato 'YYYY-MM-DD'
+        var formattedDate = selectedDate.toISOString().slice(0, 10);
+
+        // Función para redirigir a la página de inicio después del inicio de sesión exitoso
+        function redirectToHomePage() {
+            window.location.href = '/';
+        }
+
+        // Aquí implementarías las funciones de JavaScript para manejar la interacción del usuario
+        function login() {
+            var email = document.getElementById('loginEmail').value;
+            var password = document.getElementById('loginPassword').value;
+
+            // Validar el formato del correo electrónico
+            var emailRegex = /^[a-zA-Z0-9_-]+@[a-zA-Z0-9]+\.[a-zA-Z]{2,3}$/;
+            if (!emailRegex.test(email)) {
+                alert('Por favor, ingrese un correo electrónico válido.');
+                return;
+            }
+
+            // Enviar datos de inicio de sesión al servidor Flask
+            fetch('/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    email: email,
+                    password: password
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Redirigir al usuario a la página de inicio después del inicio de sesión exitoso
+                    alert('Inicio de sesión exitoso.');
+                    redirectToHomePage();
+                } else {
+                    alert('Inicio de sesión fallido. Por favor, verifica tus credenciales.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+
+        function showWorkspace() {
+            document.getElementById('loginForm').style.display = 'none';
+            document.getElementById('login').style.display = 'block'; // Mostrar el contenido del área de trabajo
+        }
+
+        function showRegisterForm() {
+            document.getElementById('loginForm').style.display = 'none';
+            document.getElementById('registerForm').style.display = 'block';
+        }
+
+        function register() {
+            // Obtener los valores del formulario de registro
+            var registerEmail = document.getElementById('registerEmail').value;
+            var registerUsername = document.getElementById('registerUsername').value;
+            var registerFirstName = document.getElementById('registerFirstName').value;
+            var registerLastName = document.getElementById('registerLastName').value;
+            var registerPassword = document.getElementById('registerPassword').value;
+            var daySelect = document.getElementById('daySelect').value;
+            var monthSelect = document.getElementById('monthSelect').value;
+            var yearSelect = document.getElementById('yearSelect').value;
+
+            // Convertir el mes de texto a un número (1-12)
+            var months = [
+                'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+                'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+            ];
+            var monthNumber = months.indexOf(monthSelect) + 1;
+
+            // Formatear la fecha en el formato 'YYYY-MM-DD'
+            var formattedDate = yearSelect + '-' + monthNumber.toString().padStart(2, '0') + '-' + daySelect.toString().padStart(2, '0');
+
+            // Crear un objeto FormData para enviar datos de formulario
+            var formData = new FormData();
+            formData.append('registerEmail', registerEmail);
+            formData.append('registerUsername', registerUsername);
+            formData.append('registerFirstName', registerFirstName);
+            formData.append('registerLastName', registerLastName);
+            formData.append('registerPassword', registerPassword);
+            formData.append('dob', formattedDate);
+
+            // Enviar datos de registro al servidor Flask como datos de formulario
+            fetch('/register', {
+                method: 'POST',
+                body: formData
+            })
+
+        }
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,102 @@
+body {
+    background-image: url(fondo.jpg);
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    color: white; /* Cambiar el color del texto a blanco */
+    font-family: Arial, sans-serif; /* Cambiar el estilo de la fuente */
+    text-align: center;
+}
+
+.perfil {
+    text-align: center;
+
+}
+.usuario-info {
+    background-color: rgba(255, 255, 255, 0.397); /* Fondo semi-transparente */
+    padding: 30px;
+    border-radius: 20px; /* Bordes redondeados */
+    display: flex;
+    flex-direction: column;
+    align-items: left; 
+    margin: 20px;
+    border: 2px solid rgb(72, 255, 0);
+}
+.usuario-info img {
+    max-width: 100px;
+    max-height: 100px;
+    margin-bottom: 10px;
+    
+}
+.nombre-apellido {
+    font-weight: bold;
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+.datos-usuario {
+    flex: 1;
+    text-align: center;
+    
+}
+.datos-usuario p {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.editar-btn {
+    margin-left: 10px;
+    flex-direction: column
+}
+
+/* Estilos CSS para la ventana emergente */
+.ventana-emergente {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #ffffff75;
+    padding: 30px;
+    border-radius: 20px;
+    border: 1px solid #ccc;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    z-index: 9999;
+    text-align: center;
+    border: 2px solid rgb(72, 255, 0);
+}
+
+/* Estilo para oscurecer el fondo cuando la ventana emergente está abierta */
+.ventana-emergente-fondo {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 9998;
+}
+
+/* Ajuste para centrar los label y los input en la ventana emergente */
+.ventana-emergente label,
+.ventana-emergente input {
+    display: block; /* Hace que los elementos sean bloques para centrarlos verticalmente */
+    margin: 10px auto; /* Centra los elementos horizontalmente */
+    text-align: left; /* Alinea el texto del label a la izquierda */
+    width: 80%; /* Ajusta el ancho según tus preferencias */
+}
+
+.button-container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    height: 100vh; /* Ajusta la altura al 100% del viewport */
+    flex-direction: column;
+}
+
+.button-container button {
+    margin: 10px;
+}

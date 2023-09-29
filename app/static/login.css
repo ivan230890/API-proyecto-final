@@ -1,0 +1,72 @@
+*{
+    margin: 0px;
+    padding: 0px;
+}
+body {
+    background-image: url(sinergia.jpg);
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    color: rgba(255, 255, 255, 0.925); /* color del texto */
+    font-family: Arial, sans-serif; /* Cambiar el estilo de la fuente */
+}
+
+#loginForm, #registerForm {
+    text-align: center;
+    background-color: rgba(255, 255, 255, 0.329); /* Fondo semi-transparente */
+    padding: 20px;
+    border-radius: 10px; /* Bordes redondeados */
+    display: flex;
+    flex-direction: column; /* Colocar los elementos en una columna */
+    align-items: center; /* Centrar los elementos horizontalmente */
+    border: 2px solid rgb(72, 255, 0);  /* color del borde */
+}        
+
+#loginForm h2, #registerForm h2 {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 10px;
+    font-size: 24px; /* Cambiar el tamaño de la fuente */
+}
+
+#loginForm input, #registerForm input,
+
+#loginForm button, #registerForm button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+/* Estilos para los menús desplegables */
+#registerForm .date-select-container {
+    display: flex;
+    flex-direction: row-reverse ;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+#login {
+    display: none; /* Ocultar el contenido del área de trabajo por defecto */
+}
+
+#workspace {
+    display: flex;
+    height: 100vh;
+}
+
+button {
+    background-color: #b3ff00;
+    color: rgb(14, 4, 4);
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(100, 243, 5, 0.678);
+}

@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Aplicación de Mensajería</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for ('static', filename ='loginP.css') }}">
+    <title>Pantalla de Inicio de Sesión</title>
+    <link rel="stylesheet" type="text/css" href="loginP.css">
+</head>
+<body>
+    <!-- Pantalla Principal de inicio de sesión -->
+    <div class="logout-button">
+        <button onclick="confirmLogout()">Cerrar Sesión</button>
+    </div>
+    
+    <div class="loginP">
+        <div id="bloqueiz">
+            <!-- Mostrar los servidores dinámicamente -->
+            {% for servidor in servidores %}
+            <div class="icono" onclick="mostrarCrearCanal('{{ servidor.nombre_servidor }}')">
+                <img src="{{ url_for('static', filename='baterias.png') }}" alt="{{ servidor.nombre_servidor }}">
+                <p class="nombre-servidor">{{ servidor.nombre_servidor }}</p>
+            </div>
+            {% endfor %}
+            <!------------------------------------------->
+            <div class="icono" onclick="mostrarCrearServidor()">
+                <img src="{{ url_for('static', filename='mas.png') }}" alt="Añadir un Servidor">
+            </div>
+            <div class="icono" onclick="mostrarIconosSecundarios()">
+                <img src="{{ url_for('static', filename='iconoubicacion.png') }}" alt="Explorar servidores">
+            </div>
+            <div class="icono" onclick="mostrarPerfil()">
+                <img src="{{ url_for('static', filename='abuelo.jpg') }}" alt="Usuario logeado">
+            </div>
+        <div id="bloquemed">
+            <div id="canales-container"></div>
+                <ul id="lista-canales">
+                    <!-- Aquí se mostrarán los canales creados dinámicamente -->
+                </ul>
+        </div>
+        
+        </div>
+            <div id="bloqueder">
+            <!-- Aquí se mostrarán los iconos secundarios cuando se seleccione un icono primario -->
+        </div>
+    </div>
+
+    <!-- Mensaje para crear un servidor -->
+    <div id="crearServidor">
+        <h2>Crear un servidor</h2>
+        <form id="crearServidorForm" action="/guardar_servidor" method="POST">
+            <label for="nombreServidor">Nombre del nuevo servidor:</label>
+            <input type="text" id="nombreServidor" placeholder="Ingrese el nombre del servidor">
+            <input type="hidden" id="user_id" name="user_id" value="{{ session.get('user_id') }}">
+            <button type="button" onclick="crearServidor()">Aceptar</button>
+            <button type="button" onclick="cancelarCreacion()">Cancelar</button>
+        </form>
+    </div>
+
+    <!-- Mensaje para crear un canal -->
+    <div id="crearCanal">
+        <h2>Crear un canal</h2>
+        <form id="crearCanalForm" action="/crear_canal" method="POST">
+            <label for="nombre-canal">Nombre del nuevo canal:</label>
+            <input type="text" id="nombre-canal" placeholder="Ingrese el nombre del canal" />
+            <input type="hidden" id="servidorNombre" name="servidorNombre" />
+            <button type="button" onclick="crearCanal()">Confirmar</button>
+            <button type="button" onclick="cancelarCreacion()">Cancelar</button>
+        </form>
+    </div>
+
+    <script>
+        function confirmLogout() {
+            if (confirm("¿Está seguro de que quiere cerrar sesión?")) {
+                // Si el usuario hace clic en "Aceptar", redirige a la página de inicio de sesión (login.html)
+                window.location.href = "/";
+            } else {
+                // Si el usuario hace clic en "Cancelar", no se realiza ninguna acción
+            }
+        }
+
+        // Agregar líneas verticales
+        function agregarLineasVerticales() {
+            var bloqueiz = document.getElementById('bloqueiz');
+            var bloquemed = document.getElementById('bloquemed');
+            var bloqueder = document.getElementById('bloqueder');
+            var contenedor = document.querySelector('.loginP');
+
+            // Calcular los anchos
+            var anchoBloqueiz = 20; // 25% de ancho
+            var anchoBloquemed = 25; // 25% de ancho
+            var anchoBloqueder = 50; // 50% de ancho
+
+            // Aplicar estilos en línea para los bloques
+            bloqueiz.style.width = anchoBloqueiz + '%';
+            bloquemed.style.width = anchoBloquemed + '%';
+            bloqueder.style.width = anchoBloqueder + '%';
+
+            // Calcular las posiciones de las líneas verticales
+            var linea1Width = (anchoBloqueiz / 100) * contenedor.offsetWidth;
+            var linea2Width = ((anchoBloqueiz + anchoBloquemed) / 100) * contenedor.offsetWidth;
+
+            // Crear una línea vertical para dividir bloqueiz y bloquemed
+            var linea1 = document.createElement('div');
+            linea1.style.borderLeft = '2px solid rgb(72, 255, 0)';
+            linea1.style.height = '100%';
+            linea1.style.position = 'absolute';
+            linea1.style.left = `${linea1Width}px`;
+            contenedor.appendChild(linea1);
+
+            // Crear una línea vertical para dividir bloquemed y bloqueder
+            var linea2 = document.createElement('div');
+            linea2.style.borderLeft = '2px solid rgb(72, 255, 0)';
+            linea2.style.height = '100%';
+            linea2.style.position = 'absolute';
+            linea2.style.left = `${linea2Width}px`;
+            contenedor.appendChild(linea2);
+        }
+
+        // Llama a la función para agregar las líneas verticales
+        agregarLineasVerticales();
+            
+        //Perfil del usuario--------------------------------------------------------------------------------------------------
+        // crear un servidor--------------------------------------------------------------------------------------------------
+        function mostrarCrearServidor() {
+            // Mostrar el mensaje de creación de servidor
+            var crearServidor = document.getElementById('crearServidor');
+            crearServidor.style.display = 'block';
+        }
+
+        function crearServidor() {
+            // Obtener el nombre del servidor ingresado
+            var nombreServidor = document.getElementById('nombreServidor').value;
+
+            if (nombreServidor) {
+                // Obtener el ID del usuario desde la sesión
+                var user_id = document.getElementById('user_id').value;
+
+                // Crear un objeto JavaScript con los datos que deseas enviar
+                var datos = {
+                    nombreServidor: nombreServidor,
+                    user_id: user_id, // Agregar el ID del usuario al objeto
+                };
+                // Crear un nuevo icono de servidor y agregarlo al bloque izquierdo
+                //var bloqueIzquierdo = document.getElementById('bloqueiz');    //
+                var nuevoIconoServidor = document.createElement('div');
+                nuevoIconoServidor.className = 'icono';
+                //nuevoIconoServidor.textContent = nombreServidor;  //
+                //bloqueIzquierdo.appendChild(nuevoIconoServidor);  //
+
+                // Crear una imagen y configurar su atributo src
+                var imagenServidor = document.createElement('img');
+                imagenServidor.src = "{{ url_for('static', filename='baterias.png') }}"; 
+                imagenServidor.alt = nombreServidor;
+
+                // Agregar la imagen al icono del servidor
+                nuevoIconoServidor.appendChild(imagenServidor);
+
+                // Agregar el nombre del servidor como texto debajo de la imagen
+                var nombreServidorTexto = document.createElement('p'); //
+                nombreServidorTexto.textContent = nombreServidor;   //
+
+                // Agregar la clase CSS al elemento <p> para aplicar los estilos
+                nombreServidorTexto.classList.add('nombre-servidor');
+                // Agregar el nombre del servidor como texto debajo de la imagen
+                nuevoIconoServidor.appendChild(nombreServidorTexto);    //
+
+                // Obtener el bloque izquierdo y agregar el nuevo icono de servidor
+                var bloqueIzquierdo = document.getElementById('bloqueiz');
+                bloqueIzquierdo.appendChild(nuevoIconoServidor);   // implemento recientemente
+
+                // Agregar un evento de clic al nuevo icono de servidor
+                nuevoIconoServidor.addEventListener("click", function() {
+                    mostrarCrearCanal(nombreServidor);
+                });
+
+                // Ocultar el mensaje de creación de servidor
+                var crearServidor = document.getElementById('crearServidor');
+                crearServidor.style.display = 'none';
+                
+                // Enviar la solicitud POST al servidor
+                fetch("/guardar_servidor", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(datos)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Maneja la respuesta del servidor aquí
+                    if (data.success) {
+                        alert("Éxito: " + data.message); // mensaje de éxito
+                    } else {
+                        alert("Error: " + data.message); // mensaje de error
+                    }
+                })
+                .catch(error => {
+                    console.error("Error al enviar la solicitud:", error);
+                });
+
+                // Limpiar el campo de entrada
+                document.getElementById('nombreServidor').value = '';        
+            }
+        }
+
+        function cancelarCreacion() {
+            // Ocultar el mensaje de creación de servidor y limpiar el campo de entrada
+            var crearServidor = document.getElementById('crearServidor');
+            crearServidor.style.display = 'none';
+            document.getElementById('nombreServidor').value = '';          
+        }
+
+        // explorar servidor-------------------------------------------------------------------------------------------------------------
+        
+        function mostrarIconosSecundarios() {
+            const bloqueder = document.getElementById("bloqueder");
+            // Eliminamos cualquier icono secundario previamente mostrado
+            bloqueder.innerHTML = "";
+
+            const iconosSecundarios = [
+                "{{ url_for('static', filename='literaturafantastica.png') }}",
+                "{{ url_for('static', filename='locuracinematografica.png') }}",
+                "{{ url_for('static', filename='relatosdeviajes.png') }}",
+                "{{ url_for('static', filename='saludybienestar.png') }}",
+                "{{ url_for('static', filename='centraldejuegos.png') }}",
+                "{{ url_for('static', filename='fanaticodeldeporte.png') }}",
+                "{{ url_for('static', filename='caosmusical.png') }}"
+            ];
+
+            let filaActual = document.createElement("div");
+            filaActual.classList.add("fila-iconos");
+
+            iconosSecundarios.forEach((iconoSrc, index) => {
+                const icono = crearIconoSecundario(iconoSrc, "Icono Secundario " + (index + 1));
+                icono.addEventListener("click", () => mostrarMensajeConfirmacion("Icono Secundario " + (index + 1)));
+                filaActual.appendChild(icono);
+
+                // Cada 4 iconos, crea una nueva fila
+                if ((index + 1) % 4 === 0) {
+                   bloqueder.appendChild(filaActual);
+                   filaActual = document.createElement("div");
+                   filaActual.classList.add("fila-iconos");
+                }
+            });
+
+            // Si hay iconos restantes en la última fila, agrégar
+            if (filaActual.children.length > 0) {
+                bloqueder.appendChild(filaActual);
+            }
+        }
+
+        
+
+        function crearIconoSecundario(src, alt) {
+            const icono = document.createElement("div");
+            icono.classList.add("icono");
+            const imagen = document.createElement("img");
+            imagen.src = src; // 
+            icono.appendChild(imagen);
+          
+            // Cambiar el texto alternativo a mostrar en el bloque izquierdo
+            icono.addEventListener("mouseover", () => mostrarNombreIcono(alt));
+            //icono.addEventListener("mouseover", () => mostrarNombreIcono(icono.querySelector("img").alt));    //
+            icono.addEventListener("mouseout", () => ocultarNombreIcono());
+
+            return icono;
+        }
+
+        function mostrarNombreIcono(nombre) {
+            const nombreIconoSeleccionado = document.getElementById("nombreIconoSeleccionado");
+            // Crear un elemento <p> para el nombre del icono
+            const nombreIconoTexto = document.createElement("p");
+            nombreIconoTexto.textContent = "Icono seleccionado: " + nombre;
+            // Aplicar la clase CSS para el estilo
+            nombreIconoTexto.classList.add('nombre-icono');
+            // Reemplazar el contenido actual con el nuevo elemento <p>
+            nombreIconoSeleccionado.innerHTML = "";
+            nombreIconoSeleccionado.appendChild(nombreIconoTexto);
+            //nombreIconoSeleccionado.textContent = "Icono seleccionado: " + nombre;
+        }
+
+        function mostrarMensajeConfirmacion(iconName) {
+            const mensaje = document.createElement("div");
+            mensaje.classList.add("mensaje");
+
+            const mensajeSuperior = document.createElement("div");
+            mensajeSuperior.textContent = "Unirse a un servidor";
+
+            const mensajeInferior = document.createElement("div");
+            mensajeInferior.textContent = `¿Quieres unirte a ${iconName}?`;
+            
+            const botonConfirmar = document.createElement("button");
+            botonConfirmar.textContent = "Confirmar";
+            botonConfirmar.addEventListener("click", () => agregarIconoAlBloqueIzquierdo(iconName));
+            
+            const botonCancelar = document.createElement("button");
+            botonCancelar.textContent = "Cancelar";
+            botonCancelar.addEventListener("click", () => {
+                mensaje.remove(); // Eliminar el mensaje en caso de cancelar
+            });
+
+            mensajeInferior.appendChild(botonConfirmar);
+            mensajeInferior.appendChild(botonCancelar);
+
+            mensaje.appendChild(mensajeSuperior);
+            mensaje.appendChild(mensajeInferior);
+
+            const bloqueder = document.getElementById("bloqueder");
+            bloqueder.appendChild(mensaje);
+        }
+
+        function agregarIconoAlBloqueIzquierdo(iconName) {
+            const bloqueder = document.getElementById("bloqueder");
+            const bloqueiz = document.getElementById("bloqueiz");
+
+            const nuevoIcono = crearIconoSecundario("{{ url_for('static', filename='baterias.png') }}", iconName);
+            bloqueiz.insertBefore(nuevoIcono, bloqueiz.firstChild);
+
+            // Agregar imagen al icono en el bloque izquierdo
+            const iconoPrincipal = document.querySelector(".icono img"); // Seleccionar el icono principal
+            nuevoIcono.querySelector("img").src = iconoPrincipal.src; // Asignar la misma imagen al nuevo icono
+
+            // Eliminar el mensaje de confirmación
+            const mensaje = document.querySelector(".mensaje");
+            if (mensaje) {
+                mensaje.remove();
+            }
+
+            // Agregar un evento de clic al nuevo icono para mostrar canales al hacer clic
+            nuevoIcono.addEventListener("click", function() {
+                mostrarCanales(nombreServidor);
+            });
+        }
+
+        //mostrarPerfil--------------------------------------------------------------------------------------------------------------------
+        function mostrarPerfil() {
+            clic_en_mi_perfil = true; // Establece la variable en true
+            // Redirige a mi_perfil.html
+            if (clic_en_mi_perfil) {
+                window.location.href = "{{ url_for('mi_perfil') }}";
+            }
+        }
+
+        //Canales del seervidor------------------------------------------------------------------------------------------------------------
+        
+        function mostrarCrearCanal(servidorNombre) {
+            // Obtener el elemento del formulario de creación de canal
+            var crearCanalForm = document.getElementById('crearCanal');
+            
+            // Asignar el nombre del servidor al campo oculto en el formulario
+            var servidorNombreField = document.getElementById('servidorNombre');
+            servidorNombreField.value = servidorNombre;
+
+            // Mostrar el formulario de creación de canal
+            crearCanalForm.style.display = 'block';
+        }
+        
+    </script>
+
+</body>
+</html>
+
